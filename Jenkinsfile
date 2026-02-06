@@ -97,5 +97,19 @@ pipeline {
                 }
             }
         }
+         failed
+         {
+         emailext(
+                    subject: "Automation Test Report - Build #${BUILD_NUMBER}",
+                    body: """
+                        Hi Team,<br/><br/>
+                        Please find the TestNG emailable report below:<br/>
+                        <a href="${BUILD_URL}Extent_20Automation_20Report/">View Report</a><br/><br/>
+                        Thanks
+                    """,
+                    mimeType: 'text/html',
+                    to: 'chukkalatheertham@gmail.com'
+                )
+         }
     }
 }
