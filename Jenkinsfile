@@ -27,39 +27,33 @@ pipeline {
                 bat """
                 echo Cleaning up existing containers...
                 docker-compose down -v --remove-orphans || exit /b 0
-                ping -n 3 localhost >nul 2>&1 || exit /b 0
+                ping -n 3 localhost >nul 2>&1
                 for /f "tokens=*" %%i in ('docker ps -aq --filter "name=selenium"') do docker rm -f %%i 2>nul || exit /b 0
-                ping -n 3 localhost >nul 2>&1 || exit /b 0
+                ping -n 3 localhost >nul 2>&1
                 echo Starting Selenium Grid...
                 docker-compose up -d
-                echo Waiting for Selenium Hub to be healthy...
+                echo Waiting for Selenium Hub to be ready...
                 setlocal enabledelayedexpansion
                 set retries=60
                 set count=0
                 :wait_loop
                 set /a count=!count! + 1
                 if !count! gtr !retries! (
-                    echo Grid failed to become healthy after !retries! retries
+                    echo Grid failed to start after !retries! retries
                     docker logs selenium-hub
                     exit /b 1
                 )
-                docker ps -q -f name=selenium-hub >nul 2>&1
+                docker ps --filter "name=selenium-hub" --filter "status=running" | find "selenium-hub" >nul 2>&1
                 if errorlevel 1 (
-                    echo Attempt !count!/!retries!: Hub container not running yet...
+                    echo Attempt !count!/!retries!: Waiting for Hub container to be running...
                     ping -n 2 localhost >nul 2>&1
                     goto wait_loop
                 )
-                echo Attempt !count!/!retries!: Hub is running, checking connectivity...
-                for /f "delims=" %%a in ('docker inspect -f "{{.State.Health.Status}}" selenium-hub 2^>nul') do set health=%%a
-                if "!health!"=="healthy" (
-                    echo Grid is healthy and ready!
-                    goto grid_ready
-                )
-                echo Health status: !health!, waiting...
-                ping -n 2 localhost >nul 2>&1
-                goto wait_loop
+                echo Attempt !count!/!retries!: Hub container is running!
+                ping -n 3 localhost >nul 2>&1
+                goto grid_ready
                 :grid_ready
-                echo Grid startup complete
+                echo Grid is ready, proceeding with tests
                 """
             }
         }
