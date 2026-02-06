@@ -75,6 +75,18 @@ pipeline {
                 archiveArtifacts 'test-output/**'
             }
         }
+        stage('Publish Extent Report') {
+            steps {
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'test-output',
+                    reportFiles: 'ExtentReport.html',
+                    reportName: 'Extent Automation Report'
+                ])
+            }
+        }
     }
 
     post {
