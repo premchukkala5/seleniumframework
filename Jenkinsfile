@@ -72,6 +72,7 @@ pipeline {
         stage('Archive Results') {
             steps {
                 archiveArtifacts 'target/surefire-reports/**'
+                archiveArtifacts 'test-output/**'
             }
         }
     }
