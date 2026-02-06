@@ -25,8 +25,15 @@ pipeline {
             }
             steps {
                 bat """
-                docker-compose down -v
+                echo Cleaning up existing containers...
+                docker-compose down -v --remove-orphans || exit /b 0
+                timeout /t 5 /nobreak
+                for /f "tokens=*" %%i in ('docker ps -aq --filter "name=selenium"') do docker rm -f %%i 2>nul || exit /b 0
+                timeout /t 2 /nobreak
+                echo Starting Selenium Grid...
                 docker-compose up -d
+                echo Waiting for containers to be ready...
+                timeout /t 10 /nobreak
                 """
             }
         }
