@@ -24,7 +24,10 @@ pipeline {
                 expression { params.EXECUTION_ENV == 'grid' }
             }
             steps {
-                bat 'docker-compose up -d'
+                bat """
+                docker-compose down -v
+                docker-compose up -d
+                """
             }
         }
 
