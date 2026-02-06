@@ -24,16 +24,16 @@ pipeline {
                 expression { params.EXECUTION_ENV == 'grid' }
             }
             steps {
-                sh 'docker-compose up -d'
+                bat 'docker-compose up -d'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh """
-                mvn clean test \
-                -Dbrowser=${params.BROWSER} \
-                -Dheadless=${params.HEADLESS} \
+                bat """
+                mvn clean test ^
+                -Dbrowser=${params.BROWSER} ^
+                -Dheadless=${params.HEADLESS} ^
                 -Dgrid=${params.EXECUTION_ENV == 'grid'}
                 """
             }
@@ -51,7 +51,7 @@ pipeline {
         always {
             script {
                 if (params.EXECUTION_ENV == 'grid') {
-                    sh 'docker-compose down'
+                    bat 'docker-compose down'
                 }
             }
         }
