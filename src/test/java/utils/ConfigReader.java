@@ -14,7 +14,15 @@ public class ConfigReader {
         try {
             String env = System.getProperty("env", "test");
            // FileInputStream fis = new FileInputStream("src/test/resources/config-"+env+".properties");
-           InputStream fis = ConfigReader.class.getClassLoader().getResourceAsStream("config-"+env+".properties");
+            String fileName = "config-" + env + ".properties";
+           InputStream fis = ConfigReader.class.getClassLoader().getResourceAsStream(fileName);
+            if (fis == null) {
+                throw new RuntimeException(
+                        "❌ Config file not found: " + fileName +
+                                " (env=" + env + ")"
+                );
+            }
+
             prop = new Properties();
             prop.load(fis);
         } catch (FileNotFoundException e) {
