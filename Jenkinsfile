@@ -99,7 +99,7 @@ pipeline {
                 }
             }
         }
-         failed
+         failure
          {
          emailext(
                     subject: "Automation Test Report - Build #${BUILD_NUMBER}",
