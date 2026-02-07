@@ -8,6 +8,7 @@ pipeline {
     parameters {
         choice(name: 'BROWSER', choices: ['chrome', 'firefox', 'edge'])
         choice(name: 'EXECUTION_ENV', choices: ['grid', 'local'])
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'])
         booleanParam(name: 'HEADLESS', defaultValue: true)
     }
 
@@ -65,6 +66,7 @@ pipeline {
                 -Dbrowser=${params.BROWSER} ^
                 -Dheadless=${params.HEADLESS} ^
                 -Dgrid=${params.EXECUTION_ENV == 'grid'}
+                -Denv=${params.ENV}
                 """
             }
         }

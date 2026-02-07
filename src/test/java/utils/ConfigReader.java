@@ -3,6 +3,7 @@ package utils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigReader {
@@ -11,7 +12,9 @@ public class ConfigReader {
 
     static {
         try {
-            FileInputStream fis = new FileInputStream("src/test/resources/config.properties");
+            String env = System.getProperty("env", "test");
+           // FileInputStream fis = new FileInputStream("src/test/resources/config-"+env+".properties");
+           InputStream fis = ConfigReader.class.getClassLoader().getResourceAsStream("config-"+env+".properties");
             prop = new Properties();
             prop.load(fis);
         } catch (FileNotFoundException e) {
@@ -19,10 +22,11 @@ public class ConfigReader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static String getProperty(String key){
         return prop.getProperty(key);
     }
+
 }
+
